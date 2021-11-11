@@ -9,7 +9,8 @@ public class SantaScenario {
 	public List<Elf> elves;
 	public List<Reindeer> reindeers;
 	public boolean isDecember;
-	
+	public int day;
+
 	public static void main(String args[]) {
 		SantaScenario scenario = new SantaScenario();
 		scenario.isDecember = false;
@@ -27,15 +28,18 @@ public class SantaScenario {
 			th.start();
 		}
 		// The reindeer: in this case: 9
-		scenario.reindeers = new ArrayList<>();
-		for(int i=0; i != 9; i++) {
-			Reindeer reindeer = new Reindeer(i+1, scenario);
-			scenario.reindeers.add(reindeer);
-			th = new Thread(reindeer);
-			th.start();
-		}
+		// scenario.reindeers = new ArrayList<>();
+		// for(int i=0; i != 9; i++) {
+		// 	Reindeer reindeer = new Reindeer(i+1, scenario);
+		// 	scenario.reindeers.add(reindeer);
+		// 	th = new Thread(reindeer);
+		// 	th.start();
+		// }
 		// now, start the passing of time
-		for(int day = 1; day < 500; day++) {
+		for (int day = 330; day < 500; day++) {
+			
+			// This will allow threads to monitor day number to determine when to terminate themselves.
+			scenario.day = day;
 			// wait a day
 			try {
 				Thread.sleep(100);
@@ -53,9 +57,9 @@ public class SantaScenario {
 			for(Elf elf: scenario.elves) {
 				elf.report();
 			}
-			for(Reindeer reindeer: scenario.reindeers) {
-				reindeer.report();
-			}
+			// for(Reindeer reindeer: scenario.reindeers) {
+			// 	reindeer.report();
+			// }
 		}
 	}
 	

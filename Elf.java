@@ -1,8 +1,10 @@
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Elf implements Runnable {
 
-	enum ElfState {
+	public enum ElfState 
+	{
 		WORKING, TROUBLE, AT_SANTAS_DOOR
 	};
 
@@ -13,52 +15,71 @@ public class Elf implements Runnable {
 	private int number;
 	private Random rand = new Random();
 	private SantaScenario scenario;
+	private final int finalDay = 370;
 
-	public Elf(int number, SantaScenario scenario) {
+	public Elf(int number, SantaScenario scenario) 
+	{
 		this.number = number;
 		this.scenario = scenario;
 		this.state = ElfState.WORKING;
 	}
 
-
-	public ElfState getState() {
+	public ElfState getState() 
+	{
 		return state;
 	}
 
 	/**
 	 * Santa might call this function to fix the trouble
+	 * 
 	 * @param state
 	 */
-	public void setState(ElfState state) {
+	public void setState(ElfState state) 
+	{
 		this.state = state;
-	}
 
+	}
 
 	@Override
 	public void run() {
 		while (true) {
-      // wait a day
-  		try {
-  			Thread.sleep(100);
-  		} catch (InterruptedException e) {
-  			// TODO Auto-generated catch block
-  			e.printStackTrace();
-  		}
-			switch (state) {
-			case WORKING: {
-				// at each day, there is a 1% chance that an elf runs into
-				// trouble.
-				if (rand.nextDouble() < 0.01) {
-					state = ElfState.TROUBLE;
-				}
+
+			// Once the target day is reached, break and execution will continue and exit ending the thread.
+			if (scenario.day == finalDay)
 				break;
+
+			// wait a day
+			try 
+			{
+				Thread.sleep(100);
+
+			} 
+			catch (InterruptedException e) 
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			case TROUBLE:
-				// FIXME: if possible, move to Santa's door
-				break;
-			case AT_SANTAS_DOOR:
-				// FIXME: if feasible, wake up Santa
-				break;
+			
+			switch (state) 
+			{
+				case WORKING: {
+					// at each day, there is a 1% chance that an elf runs into
+					// trouble.					
+					if (rand.nextDouble() < 0.2) 
+					{
+						this.state = ElfState.TROUBLE;
+					}
+					break;
+				}
+				case TROUBLE:
+					// Move to santas door.
+					setState(ElfState.AT_SANTAS_DOOR);
+					// FIXME: if possible, move to Santa's door
+					break;
+				case AT_SANTAS_DOOR:
+					scenario.santa.setState(Santa.SantaState.WOKEN_UP_BY_ELVES);
+					// FIXME: if feasible, wake up Santa
+					break;
 			}
 		}
 	}
@@ -66,7 +87,8 @@ public class Elf implements Runnable {
 	/**
 	 * Report about my state
 	 */
-	public void report() {
+	public void report() 
+	{
 		System.out.println("Elf " + number + " : " + state);
 	}
 

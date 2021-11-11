@@ -3,13 +3,26 @@
 
 public class Santa implements Runnable {
 
-	enum SantaState {SLEEPING, READY_FOR_CHRISTMAS, WOKEN_UP_BY_ELVES, WOKEN_UP_BY_REINDEER};
+	public enum SantaState {SLEEPING, READY_FOR_CHRISTMAS, WOKEN_UP_BY_ELVES, WOKEN_UP_BY_REINDEER};
+
 	private SantaState state;
+	private SantaScenario scenario;
 	
 	public Santa(SantaScenario scenario) {
 		this.state = SantaState.SLEEPING;
+		this.scenario = scenario;
 	}
 	
+
+	public SantaState getState()
+	{
+		return state;
+	}
+
+	public void setState(SantaState newState)
+	{
+		this.state = newState;
+	}
 	
 	@Override
 	public void run() {
@@ -25,10 +38,19 @@ public class Santa implements Runnable {
 			case SLEEPING: // if sleeping, continue to sleep
 				break;
 			case WOKEN_UP_BY_ELVES: 
-				// FIXME: help the elves who are at the door and go back to sleep 
+				// FIXME: help the elves who are at the door and go back to sleep
+				for (Elf elf : scenario.elves)
+				{
+					if (elf.getState() == Elf.ElfState.AT_SANTAS_DOOR)
+						elf.setState(Elf.ElfState.WORKING);
+
+				}
+				
+				this.state = SantaState.SLEEPING;
 				break;
 			case WOKEN_UP_BY_REINDEER: 
-				// FIXME: assemble the reindeer to the sleigh then change state to ready 
+				// FIXME: assemble the reindeer to the sleigh then change state to ready
+
 				break;
 			case READY_FOR_CHRISTMAS: // nothing more to be done
 				break;
